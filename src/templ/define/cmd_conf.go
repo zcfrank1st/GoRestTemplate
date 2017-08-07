@@ -12,7 +12,7 @@ var (
 
 func init() {
     flag.StringVar(&Environment, "env","dev","server run environment")
-    flag.StringVar(&Config, "conf","/Users/zcfrank1st/Desktop/git-svn/AppHome/src/app.ini","config path")
+    flag.StringVar(&Config, "conf","/root/app.ini","config path")
     flag.Parse()
 }
 

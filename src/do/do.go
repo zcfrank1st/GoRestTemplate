@@ -53,8 +53,7 @@ func main() {
     makeFile(filepath.Join(servicePath, "service.go"), service.ServiceTemplate())
 
     makeFile(filepath.Join(configPath, "glide.yaml"), project_util.GlideTemplate())
-    // TODO app.ini
-    makeFile(filepath.Join(configPath, "app.ini"), project_util.IniTemplate())
+    makeFile(filepath.Join(configPath, "app.ini"), project_util.IniTemplate(flags))
     makeFile(filepath.Join(configPath, "Makefile"), project_util.MakefileTemplate())
 }
 
