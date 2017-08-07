@@ -24,14 +24,6 @@ func main() {
             slide.PUT("/:id", service.UpdateSlide)
             slide.DELETE("/:id", service.DeleteSlide)
         }
-        //module := g.Group("/module")
-        //{
-        //
-        //}
-        //theme := g.Group("/theme")
-        //{
-        //
-        //}
     }
 
     serv.Run()
