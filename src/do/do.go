@@ -9,9 +9,8 @@ import (
     "templ/service"
     "templ/project_util"
     "path/filepath"
-    "html/template"
     "strings"
-    "fmt"
+    "text/template"
 )
 
 var absolute_path string
@@ -19,6 +18,11 @@ var absolute_path string
 var services string
 var flags string
 var inis string
+
+type FlagValueTemplate struct {
+    FlagVars []string
+    FlagSegments []string
+}
 
 func init() {
     flag.StringVar(&absolute_path, "p", "", "set project init path")
@@ -44,12 +48,7 @@ func main() {
 
     os.MkdirAll(definePath, os.ModePerm)
 
-    flagVarsString, flagSegmentsString := composeFlagStrings(flags)
-    cmdVals := map[string]string {
-        "FlagVars": flagVarsString,
-        "FlagSegments": flagSegmentsString,
-    }
-    makeFileWithTemplate(filepath.Join(definePath, "cmd.go"), define.CmdConfTemplate(), cmdVals)
+    makeFileWithTemplate(filepath.Join(definePath, "cmd.go"), define.CmdConfTemplate(), FlagValueTemplate{strings.Fields(flags), strings.Fields(flags)})
     makeFile(filepath.Join(definePath, "database.go"), define.DatabaseTemplate())
     makeFile(filepath.Join(definePath, "error.go"), define.ErrorTemplate())
     makeFile(filepath.Join(definePath, "ini_loader.go"), define.IniConfTemplate())
@@ -65,15 +64,6 @@ func main() {
     makeFile(filepath.Join(configPath, "Makefile"), project_util.MakefileTemplate())
 }
 
-func composeFlagStrings(flags string) (flagVarsString string, flagSegmentsString string) {
-    fields := strings.Fields(flags)
-    for _, field := range fields {
-        flagVarsString += fmt.Sprintf("%s string\n    ", strings.Title(field))
-        flagSegmentsString += fmt.Sprintf("flag.StringVar(%s, '', '', '')", strings.Title(field)) + "\n    "
-    }
-    return
-}
-
 func makeFile(path string, content string) {
     if file, err := os.Create(path); err == nil {
         defer file.Close()
@@ -81,11 +71,14 @@ func makeFile(path string, content string) {
     }
 }
 
-func makeFileWithTemplate(path string, templateString string, vals map[string]string) {
-    tt := template.Must(template.New(path).Parse(templateString))
+func makeFileWithTemplate(path string, templateString string, flagValueTemplate FlagValueTemplate) {
+    funcMap := template.FuncMap{
+        "Title": strings.Title,
+    }
+    tt := template.Must(template.New(path).Funcs(funcMap).Parse(templateString))
 
     if file, err := os.Create(path); err == nil {
         defer file.Close()
-        tt.Execute(file, vals)
+        tt.Execute(file, flagValueTemplate)
     }
 }
