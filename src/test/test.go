@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-    fmt.Println(`adad` + "hello")
+    fmt.Println("\"\"")
 }

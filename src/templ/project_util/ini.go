@@ -10,8 +10,8 @@ var prdDefaultConfig = `
 DBConnection=""
 `
 
-func IniTemplate (flags string) string {
-    fields := strings.Fields(flags)
+func IniTemplate (inis string) string {
+    fields := strings.Fields(inis)
 
     var fieldsConfig string
     for _, value := range fields {
