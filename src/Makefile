@@ -2,4 +2,4 @@ clean:
 	rm -rf ../pkg ../bin
 
 build:
-	go build -o ../bin ./do/do.go
+	go build -o ../bin/go_rest_template ./do/do.go
