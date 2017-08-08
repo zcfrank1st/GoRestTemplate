@@ -1,6 +1,6 @@
 package bootstrap
 
-func BootstrapTemplate() string {
+func SimpleBootstrapTemplate() string {
     return `package main
 
 import (
@@ -15,15 +15,18 @@ func main() {
         c.String(200, "OK")
     })
 
-    g := serv.Group("/home")
+    g := serv.Group("/{{.Project | ToLower}}")
     {
-        slide := g.Group("/slide")
+        {{ range $index, $value := .Services }}
+        {{ $value | ToLower }} := g.Group("/{{ $value | ToLower }}")
         {
-            slide.POST("", service.AddSlide)
-            slide.GET("", service.GetAllSlides)
-            slide.PUT("/:id", service.UpdateSlide)
-            slide.DELETE("/:id", service.DeleteSlide)
+            {{ $value | ToLower }}.GET("", service.GetAll{{ $value | Title }}s)
+            {{ $value | ToLower }}.GET("/:id", service.Get{{ $value | Title }})
+            {{ $value | ToLower }}.POST("", service.Add{{ $value | Title }})
+            {{ $value | ToLower }}.PUT("/:id", service.Update{{ $value | Title }})
+            {{ $value | ToLower }}.DELETE("/:id", service.Delete{{ $value | Title }})
         }
+        {{ end }}
     }
 
     serv.Run()
