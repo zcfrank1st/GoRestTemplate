@@ -10,6 +10,8 @@ import (
 
 var (
     Connection string
+    {{ range $index, $value := .IniKeys }}{{ $value | Title }} string
+    {{ end }}
 )
 
 func init () {
@@ -18,7 +20,8 @@ func init () {
         log.Panic("init config error")
     }
 
-    Connection = conf.Section(Environment).Key("DBConnection").String()
-}
-`
+    Connection = conf.Section(Environment).Key("Connection").String()
+    {{ range $index, $value := .IniKeys }}{{ $value | Title }} = conf.Section(Environment).Key("{{ $value | Title }}").String
+    {{ end }}
+}`
 }

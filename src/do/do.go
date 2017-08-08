@@ -13,16 +13,28 @@ import (
     "text/template"
 )
 
-var absolute_path string
+var (
+    absolute_path string
 
-var services string
-var flags string
-var inis string
+    services string
+    flags string
+    inis string
 
-type FlagValueTemplate struct {
-    FlagVars []string
-    FlagSegments []string
-}
+    funcMap = template.FuncMap{
+        "Title": strings.Title,
+
+    }
+)
+
+type (
+    FlagValueTemplate struct {
+        FlagVars []string
+    }
+
+    IniValueTemplate struct {
+        IniKeys []string
+    }
+)
 
 func init() {
     flag.StringVar(&absolute_path, "p", "", "set project init path")
@@ -44,23 +56,24 @@ func main() {
     configPath := filepath.Join(absolute_path, "src")
 
     os.MkdirAll(bootstrapPath, os.ModePerm)
-    makeFile(filepath.Join(bootstrapPath, "bootstrap.go"), bootstrap.BootstrapTemplate())
-
     os.MkdirAll(definePath, os.ModePerm)
-
-    makeFileWithTemplate(filepath.Join(definePath, "cmd.go"), define.CmdConfTemplate(), FlagValueTemplate{strings.Fields(flags), strings.Fields(flags)})
-    makeFile(filepath.Join(definePath, "database.go"), define.DatabaseTemplate())
-    makeFile(filepath.Join(definePath, "error.go"), define.ErrorTemplate())
-    makeFile(filepath.Join(definePath, "ini_loader.go"), define.IniConfTemplate())
-    makeFile(filepath.Join(definePath, "response_code.go"), define.ResponseCodeTemplate())
-    makeFile(filepath.Join(definePath, "response.go"), define.ResponseTemplate())
-
     os.MkdirAll(servicePath, os.ModePerm)
+
+    flags := strings.Fields(flags)
+    makeFileWithTemplate(filepath.Join(definePath, "cmd.go"), define.CmdConfTemplate(), FlagValueTemplate{flags})
+    iniKeys := strings.Fields(inis)
+    iniValueTemplate := IniValueTemplate{iniKeys}
+    makeFileWithTemplate(filepath.Join(definePath, "ini_loader.go"), define.IniConfTemplate(), iniValueTemplate)
+    makeFileWithTemplate(filepath.Join(configPath, "app.ini"), project_util.IniTemplate(), iniValueTemplate)
     // TODO multi services
     makeFile(filepath.Join(servicePath, "service.go"), service.ServiceTemplate())
 
+    makeFile(filepath.Join(bootstrapPath, "bootstrap.go"), bootstrap.BootstrapTemplate())
+    makeFile(filepath.Join(definePath, "database.go"), define.DatabaseTemplate())
+    makeFile(filepath.Join(definePath, "error.go"), define.ErrorTemplate())
+    makeFile(filepath.Join(definePath, "response_code.go"), define.ResponseCodeTemplate())
+    makeFile(filepath.Join(definePath, "response.go"), define.ResponseTemplate())
     makeFile(filepath.Join(configPath, "glide.yaml"), project_util.GlideTemplate())
-    makeFile(filepath.Join(configPath, "app.ini"), project_util.IniTemplate(inis))
     makeFile(filepath.Join(configPath, "Makefile"), project_util.MakefileTemplate())
 }
 
@@ -71,14 +84,11 @@ func makeFile(path string, content string) {
     }
 }
 
-func makeFileWithTemplate(path string, templateString string, flagValueTemplate FlagValueTemplate) {
-    funcMap := template.FuncMap{
-        "Title": strings.Title,
-    }
+func makeFileWithTemplate(path string, templateString string, valueTemplate interface{}) {
     tt := template.Must(template.New(path).Funcs(funcMap).Parse(templateString))
 
     if file, err := os.Create(path); err == nil {
         defer file.Close()
-        tt.Execute(file, flagValueTemplate)
+        tt.Execute(file, valueTemplate)
     }
 }

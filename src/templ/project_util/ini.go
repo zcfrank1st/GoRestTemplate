@@ -1,23 +1,12 @@
 package project_util
 
-import "strings"
-
-var devDefaultConfig = `[dev]
-DBConnection="""root:djDev123456;@tcp(172.16.8.61:3306)/Item"""`
-
-var prdDefaultConfig = `
+func IniTemplate () string {
+    return `[dev]
+Connection="""root:djDev123456;@tcp(172.16.8.61:3306)/Item"""
+{{ range $index, $value := .IniKeys }}{{ $value | Title }}=
+{{ end }}
 [prd]
-DBConnection=""
-`
-
-func IniTemplate (inis string) string {
-    fields := strings.Fields(inis)
-
-    var fieldsConfig string
-    for _, value := range fields {
-        fieldsConfig += "\n" + value + "="
-    }
-
-    return devDefaultConfig + fieldsConfig +
-        prdDefaultConfig + fieldsConfig[1:]
+Connection=""
+{{ range $index, $value := .IniKeys }}{{ $value | Title }}=
+{{ end }}`
 }

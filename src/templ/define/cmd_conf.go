@@ -15,7 +15,7 @@ var (
 func init() {
     flag.StringVar(&Environment, "env","dev","server run environment")
     flag.StringVar(&Config, "conf","","config path")
-    {{ range $index, $value := .FlagSegments }}flag.StringVar(&{{ $value | Title }}, "{{ $value }}","","")
+    {{ range $index, $value := .FlagVars }}flag.StringVar(&{{ $value | Title }}, "{{ $value }}","","")
     {{ end }}
     flag.Parse()
 }
