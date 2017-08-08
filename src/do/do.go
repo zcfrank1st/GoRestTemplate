@@ -1,7 +1,6 @@
 package main
 
 import (
-    "path"
     "flag"
     "os"
     "templ/bootstrap"
@@ -11,6 +10,8 @@ import (
     "path/filepath"
     "strings"
     "text/template"
+    "os/exec"
+    "log"
 )
 
 var (
@@ -43,18 +44,26 @@ type (
 )
 
 func init() {
-    flag.StringVar(&absolute_path, "p", "", "set project init path")
+    flag.StringVar(&absolute_path, "absPath", "", "set project init path")
 
-    flag.StringVar(&project, "project", "", "set project name")
-    flag.StringVar(&services, "service", "", "set init services")
+    flag.StringVar(&project, "project", "demo", "set project name")
+    flag.StringVar(&services, "service", "demo", "set init services")
     flag.StringVar(&flags, "flag", "", "set cmd flags")
     flag.StringVar(&iniKeys, "ini", "", "set ini configs")
     flag.Parse()
 }
 
 func main() {
-    if !path.IsAbs(absolute_path) {
-        os.Exit(1)
+    log.Printf("{{absPath}} :%s \n", absolute_path)
+    log.Printf("{{project}} :%s \n", project)
+    log.Printf("{{service}} :%s \n", services)
+    log.Printf("{{flag}} :%s \n", flags)
+    log.Printf("{{ini}} :%s \n", iniKeys)
+
+    if absolute_path == "" {
+        file, _ := exec.LookPath(os.Args[0])
+        pathStr, _ := filepath.Abs(file)
+        absolute_path = filepath.Join(pathStr, project)
     }
 
     bootstrapPath := filepath.Join(absolute_path, "src", "bootstrap")
@@ -62,10 +71,15 @@ func main() {
     servicePath := filepath.Join(absolute_path, "src", "service")
     configPath := filepath.Join(absolute_path, "src")
 
+    // create dirs
+    log.Println("building project dirs ...")
     os.MkdirAll(bootstrapPath, os.ModePerm)
     os.MkdirAll(definePath, os.ModePerm)
     os.MkdirAll(servicePath, os.ModePerm)
+    log.Println("dirs build done ...")
 
+    // create files
+    log.Println("building project files ...")
     flags := strings.Fields(flags)
     makeFileWithTemplate(define.CmdConfTemplate(), FlagValueTemplate{flags}, []string{filepath.Join(definePath, "cmd.go")})
     iniKeys := strings.Fields(iniKeys)
@@ -88,6 +102,20 @@ func main() {
     makeFile(filepath.Join(definePath, "response.go"), define.ResponseTemplate())
     makeFile(filepath.Join(configPath, "glide.yaml"), project_util.GlideTemplate())
     makeFile(filepath.Join(configPath, "Makefile"), project_util.MakefileTemplate())
+    log.Println("project files build done...")
+
+    log.Println("loading project dependencies ...")
+    cmd := exec.Command("/bin/bash", "-c", "cd " + absolute_path + "/src; export GOPATH="+ absolute_path +"; glide install;")
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+
+    if err := cmd.Run(); err != nil {
+        log.Fatal("project dependencies load error, check GOPATH or glide if set proper")
+        os.Exit(1)
+    }
+
+    log.Println("project dependencies loading done...")
+    log.Println("project init done")
 }
 
 func makeFile(path string, content string) {
