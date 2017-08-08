@@ -54,17 +54,17 @@ func init() {
 }
 
 func main() {
+    if absolute_path == "" {
+        file, _ := exec.LookPath(os.Args[0])
+        dir,_ := filepath.Abs(filepath.Dir(file))
+        absolute_path = filepath.Join(dir, project)
+    }
+
     log.Printf("{{absPath}} :%s \n", absolute_path)
     log.Printf("{{project}} :%s \n", project)
     log.Printf("{{service}} :%s \n", services)
     log.Printf("{{flag}} :%s \n", flags)
     log.Printf("{{ini}} :%s \n", iniKeys)
-
-    if absolute_path == "" {
-        file, _ := exec.LookPath(os.Args[0])
-        pathStr, _ := filepath.Abs(file)
-        absolute_path = filepath.Join(pathStr, project)
-    }
 
     bootstrapPath := filepath.Join(absolute_path, "src", "bootstrap")
     definePath := filepath.Join(absolute_path, "src", "define")
@@ -73,9 +73,15 @@ func main() {
 
     // create dirs
     log.Println("building project dirs ...")
-    os.MkdirAll(bootstrapPath, os.ModePerm)
-    os.MkdirAll(definePath, os.ModePerm)
-    os.MkdirAll(servicePath, os.ModePerm)
+    if err:= os.MkdirAll(bootstrapPath, os.ModePerm); err != nil {
+        log.Fatal("create bootstrap dir failed")
+    }
+    if err:= os.MkdirAll(definePath, os.ModePerm); err != nil {
+        log.Fatal("create define dir failed")
+    }
+    if err:= os.MkdirAll(servicePath, os.ModePerm); err != nil {
+        log.Fatal("create service dir failed")
+    }
     log.Println("dirs build done ...")
 
     // create files
@@ -111,30 +117,32 @@ func main() {
 
     if err := cmd.Run(); err != nil {
         log.Fatal("project dependencies load error, check GOPATH or glide if set proper")
-        os.Exit(1)
     }
 
     log.Println("project dependencies loading done...")
     log.Println("project init done")
 }
 
-func makeFile(path string, content string) {
+func makeFile(path string, content string) (err error){
     if file, err := os.Create(path); err == nil {
         defer file.Close()
-        file.WriteString(content)
+        _, err = file.WriteString(content)
     }
+    return
 }
 
-func makeFileWithTemplate(templateString string, valueTemplate interface{}, s []string) {
+func makeFileWithTemplate(templateString string, valueTemplate interface{}, s []string) (er error){
     for idx, value := range s {
         tt := template.Must(template.New(value).Funcs(funcMap).Parse(templateString))
         if file, err := os.Create(value); err == nil {
             if r, ok := valueTemplate.([]string); ok {
-                tt.Execute(file, r[idx])
+                er = tt.Execute(file, r[idx])
             } else {
-                tt.Execute(file, valueTemplate)
+                er = tt.Execute(file, valueTemplate)
             }
             file.Close()
         }
     }
+
+    return
 }
