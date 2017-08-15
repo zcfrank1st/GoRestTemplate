@@ -1,6 +1,13 @@
 GoRestTemplate
 ====
-![](https://raw.githubusercontent.com/golang-samples/gopher-vector/master/gopher-front.png)
+     ____            ____                    __    ______
+    /\  _`\         /\  _`\                 /\ \__/\__  _\
+    \ \ \L\_\    ___\ \ \L\ \     __    ____\ \ ,_\/_/\ \/
+     \ \ \L_L   / __`\ \ ,  /   /'__`\ /',__\\ \ \/  \ \ \
+      \ \ \/, \/\ \L\ \ \ \\ \ /\  __//\__, `\\ \ \_  \ \ \
+       \ \____/\ \____/\ \_\ \_\ \____\/\____/ \ \__\  \ \_\
+        \/___/  \/___/  \/_/\/ /\/____/\/___/   \/__/   \/_/
+
 
 >A tool for creating a skeleton of a restful api project
 
