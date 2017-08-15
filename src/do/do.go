@@ -29,12 +29,9 @@ var (
 )
 
 type (
-    FlagValueTemplate struct {
+    InitValueTemplate struct {
         FlagVars []string
-    }
-
-    IniValueTemplate struct {
-        IniKeys []string
+        IniKeys  []string
     }
 
     BootstrapValueTemplate struct {
@@ -86,12 +83,12 @@ func main() {
 
     // create files
     log.Println("building project files ...")
-    flags := strings.Fields(flags)
-    makeFileWithTemplate(define.CmdConfTemplate(), FlagValueTemplate{flags}, []string{filepath.Join(definePath, "cmd.go")})
     iniKeys := strings.Fields(iniKeys)
-    iniValueTemplate := IniValueTemplate{iniKeys}
-    makeFileWithTemplate(define.IniConfTemplate(), iniValueTemplate, []string{filepath.Join(definePath, "ini_loader.go")})
-    makeFileWithTemplate(project_util.IniTemplate(), iniValueTemplate, []string{filepath.Join(configPath, "app.ini")})
+    flags := strings.Fields(flags)
+    initValue := InitValueTemplate{flags, iniKeys}
+
+    makeFileWithTemplate(define.InitTemplate(), initValue, []string{filepath.Join(definePath, "init.go")})
+    makeFileWithTemplate(project_util.IniTemplate(), initValue, []string{filepath.Join(configPath, "app.ini")})
 
     servicesArray := strings.Fields(services)
     var servicePaths []string
@@ -102,10 +99,8 @@ func main() {
     makeFileWithTemplate(service.SimpleServiceTemplate(), servicesArray, servicePaths)
     makeFileWithTemplate(bootstrap.SimpleBootstrapTemplate(), BootstrapValueTemplate{project, servicesArray} , []string{filepath.Join(bootstrapPath, "bootstrap.go")})
 
-    makeFile(filepath.Join(definePath, "database.go"), define.DatabaseTemplate())
     makeFile(filepath.Join(definePath, "error.go"), define.ErrorTemplate())
     makeFile(filepath.Join(definePath, "response_code.go"), define.ResponseCodeTemplate())
-    makeFile(filepath.Join(definePath, "response.go"), define.ResponseTemplate())
     makeFile(filepath.Join(configPath, "glide.yaml"), project_util.GlideTemplate())
     makeFile(filepath.Join(configPath, "Makefile"), project_util.MakefileTemplate())
     log.Println("project files build done...")
