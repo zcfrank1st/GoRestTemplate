@@ -103,6 +103,9 @@ func main() {
     makeFile(filepath.Join(definePath, "response_code.go"), define.ResponseCodeTemplate())
     makeFile(filepath.Join(configPath, "glide.yaml"), project_util.GlideTemplate())
     makeFile(filepath.Join(configPath, "Makefile"), project_util.MakefileTemplate())
+
+    makeFile(filepath.Join(absolute_path, ".gitignore"), project_util.GitIgnoreTemplate())
+    makeFile(filepath.Join(absolute_path, "README.md"), project_util.ReadmeTemplate())
     log.Println("project files build done...")
 
     log.Println("loading project dependencies ...")
