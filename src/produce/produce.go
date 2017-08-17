@@ -2,7 +2,6 @@ package build
 
 import (
     "os"
-    "log"
     "strings"
     "templ/define"
     "path/filepath"
@@ -11,6 +10,8 @@ import (
     "os/exec"
     "text/template"
     "templ/service"
+    "fmt"
+    "github.com/logrusorgru/aurora"
 )
 
 var funcMap = template.FuncMap {
@@ -31,26 +32,35 @@ type (
 )
 
 func GenerateSkeleton(absolute_path string, project string, services string, flags string, inis string) {
+    fmt.Println(aurora.Blue("[GoRestT] {{absPath}} : " + absolute_path))
+    fmt.Println(aurora.Blue("[GoRestT] {{project}} : " +  project))
+    fmt.Println(aurora.Blue("[GoRestT] {{service}} : " + services))
+    fmt.Println(aurora.Blue("[GoRestT] {{flag}} : " + flags))
+    fmt.Println(aurora.Blue("[GoRestT] {{ini}} : " + inis))
+
     bootstrapPath := filepath.Join(absolute_path, "src", "bootstrap")
     definePath := filepath.Join(absolute_path, "src", "define")
     servicePath := filepath.Join(absolute_path, "src", "service")
     configPath := filepath.Join(absolute_path, "src")
 
     // create dirs
-    log.Println("building project dirs ...")
+    fmt.Println(aurora.Cyan("[GoRestT] building project dirs ..."))
     if err:= os.MkdirAll(bootstrapPath, os.ModePerm); err != nil {
-        log.Fatal("create bootstrap dir failed")
+        fmt.Println(aurora.Red("create bootstrap dir failed"))
+        os.Exit(1)
     }
     if err:= os.MkdirAll(definePath, os.ModePerm); err != nil {
-        log.Fatal("create define dir failed")
+        fmt.Println(aurora.Red("[GoRestT] create define dir failed"))
+        os.Exit(1)
     }
     if err:= os.MkdirAll(servicePath, os.ModePerm); err != nil {
-        log.Fatal("create service dir failed")
+        fmt.Println(aurora.Red("[GoRestT] create service dir failed"))
+        os.Exit(1)
     }
-    log.Println("dirs build done ...")
+    fmt.Println(aurora.Cyan("[GoRestT] dirs build done ..."))
 
     // create files
-    log.Println("building project files ...")
+    fmt.Println(aurora.Cyan("[GoRestT] building project files ..."))
     iniKeys := strings.Fields(inis)
     flagVars := strings.Fields(flags)
     initValue := InitValueTemplate{flagVars, iniKeys}
@@ -74,19 +84,20 @@ func GenerateSkeleton(absolute_path string, project string, services string, fla
 
     makeFile(filepath.Join(absolute_path, ".gitignore"), project_util.GitIgnoreTemplate())
     makeFile(filepath.Join(absolute_path, "README.md"), project_util.ReadmeTemplate())
-    log.Println("project files build done...")
+    fmt.Println(aurora.Cyan("[GoRestT] project files build done..."))
 
-    log.Println("loading project dependencies ...")
+    fmt.Println(aurora.Cyan("[GoRestT] loading project dependencies ..."))
     cmd := exec.Command("/bin/bash", "-c", "cd " + absolute_path + "/src; export GOPATH="+ absolute_path +"; glide install;")
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
 
     if err := cmd.Run(); err != nil {
-        log.Fatal("project dependencies load error, check GOPATH or glide if set proper")
+        fmt.Println(aurora.Red("[GoRestT] project dependencies load error, check GOPATH or glide if set proper"))
+        os.Exit(1)
     }
 
-    log.Println("project dependencies loading done...")
-    log.Println("project init done")
+    fmt.Println(aurora.Green("[GoRestT] project dependencies loading done..."))
+    fmt.Println(aurora.Green("[GoRestT] project init done"))
 }
 
 func makeFile(path string, content string) (err error){

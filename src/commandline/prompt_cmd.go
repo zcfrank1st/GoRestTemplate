@@ -61,7 +61,7 @@ func parseCommands(command_string string) ([]*GoRestTCommand, error) {
     for _, command_segments := range commands_segments {
         command_fields := strings.Fields(strings.Trim(command_segments, " "))
         if !checkCommandIfValid(command_fields) {
-            return nil, errors.New("contains invalid command")
+            return nil, errors.New("[GoRestT] contains invalid command")
         }
         commands = append(commands, &GoRestTCommand{command_fields[0], command_fields[1: ]})
     }
@@ -81,6 +81,8 @@ func checkCommandIfValid(fields []string) bool {
         if args_length == 0 {
             return false
         }
+    default:
+        return false
     }
     return true
 }
@@ -102,6 +104,15 @@ func completer(d prompt.Document) []prompt.Suggest {
 }
 
 func main() {
+    fmt.Println(aurora.Brown(`
+ ____            ____                    __    ______
+/\  _ \         /\  _ \                 /\ \__/\__  _\
+\ \ \L\_\    ___\ \ \L\ \     __    ____\ \ ,_\/_/\ \/
+ \ \ \L_L   / __ \ \ ,  /   /'__ \ /',__\\ \ \/  \ \ \
+  \ \ \/, \/\ \L\ \ \ \\ \ /\  __//\__,  \\ \ \_  \ \ \
+   \ \____/\ \____/\ \_\ \_\ \____\/\____/ \ \__\  \ \_\
+    \/___/  \/___/  \/_/\/ /\/____/\/___/   \/__/   \/_/
+                                                    v1.0`))
     for {
         t := prompt.Input(
             "GoRestT ["+ time.Now().String()[:19]+"] >>> ",

@@ -5,7 +5,6 @@ import (
     "os"
     "path/filepath"
     "os/exec"
-    "log"
     "produce"
 )
 
@@ -29,18 +28,12 @@ func init() {
     simple_flag.Parse()
 }
 
-func main1() {
+func main() {
     if absolute_path == "" {
         file, _ := exec.LookPath(os.Args[0])
         dir,_ := filepath.Abs(filepath.Dir(file))
         absolute_path = filepath.Join(dir, project)
     }
-
-    log.Printf("{{absPath}} :%s \n", absolute_path)
-    log.Printf("{{project}} :%s \n", project)
-    log.Printf("{{service}} :%s \n", services)
-    log.Printf("{{flag}} :%s \n", flags)
-    log.Printf("{{ini}} :%s \n", iniKeys)
 
     build.GenerateSkeleton(absolute_path, project, services, flags, iniKeys)
 }
