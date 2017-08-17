@@ -14,8 +14,9 @@ GoRestTemplate
 
 ### How To Use
 
-* use `make build-all` to build
-* then use `./go_rest_t_simple` or `./go_rest_t_prompt` to show how to use
+* `glide install` to load dependencies
+* then `make build-all` to build
+* then `./go_rest_t_simple` or `./go_rest_t_prompt` to show how to use
 
 ### Demo Use
 
