@@ -29,7 +29,7 @@ func init() {
     simple_flag.Parse()
 }
 
-func main() {
+func main1() {
     if absolute_path == "" {
         file, _ := exec.LookPath(os.Args[0])
         dir,_ := filepath.Abs(filepath.Dir(file))

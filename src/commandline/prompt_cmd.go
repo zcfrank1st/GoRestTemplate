@@ -2,11 +2,11 @@ package main
 
 import (
     "github.com/c-bata/go-prompt"
+    "github.com/logrusorgru/aurora"
     "time"
     "strings"
     "os"
     "fmt"
-    "github.com/logrusorgru/aurora"
     "errors"
     "produce"
 )
@@ -55,7 +55,7 @@ func (c *GoRestTCommand) run() {
 }
 
 func parseCommands(command_string string) ([]*GoRestTCommand, error) {
-    var commands = make([]*GoRestTCommand, 5)
+    var commands []*GoRestTCommand
 
     commands_segments := strings.Split(command_string, SemicolonSplit)
     for _, command_segments := range commands_segments {
