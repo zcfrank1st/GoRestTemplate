@@ -1,32 +1,22 @@
-package main
+package build
 
 import (
-    "flag"
     "os"
-    "templ/bootstrap"
-    "templ/define"
-    "templ/service"
-    "templ/project_util"
-    "path/filepath"
-    "strings"
-    "text/template"
-    "os/exec"
     "log"
+    "strings"
+    "templ/define"
+    "path/filepath"
+    "templ/project_util"
+    "templ/bootstrap"
+    "os/exec"
+    "text/template"
+    "templ/service"
 )
 
-var (
-    absolute_path string
-    project string
-
-    services string
-    flags string
-    iniKeys string
-
-    funcMap = template.FuncMap {
-        "Title": strings.Title,
-        "ToLower": strings.ToLower,
-    }
-)
+var funcMap = template.FuncMap {
+    "Title": strings.Title,
+    "ToLower": strings.ToLower,
+}
 
 type (
     InitValueTemplate struct {
@@ -40,29 +30,7 @@ type (
     }
 )
 
-func init() {
-    flag.StringVar(&absolute_path, "absPath", "", "set project init path")
-
-    flag.StringVar(&project, "project", "demo", "set project name")
-    flag.StringVar(&services, "service", "demo", "set init services")
-    flag.StringVar(&flags, "flag", "", "set cmd flags")
-    flag.StringVar(&iniKeys, "ini", "", "set ini configs")
-    flag.Parse()
-}
-
-func main() {
-    if absolute_path == "" {
-        file, _ := exec.LookPath(os.Args[0])
-        dir,_ := filepath.Abs(filepath.Dir(file))
-        absolute_path = filepath.Join(dir, project)
-    }
-
-    log.Printf("{{absPath}} :%s \n", absolute_path)
-    log.Printf("{{project}} :%s \n", project)
-    log.Printf("{{service}} :%s \n", services)
-    log.Printf("{{flag}} :%s \n", flags)
-    log.Printf("{{ini}} :%s \n", iniKeys)
-
+func GernerateSkeleton(absolute_path string, project string, services string, flags string, inis string) {
     bootstrapPath := filepath.Join(absolute_path, "src", "bootstrap")
     definePath := filepath.Join(absolute_path, "src", "define")
     servicePath := filepath.Join(absolute_path, "src", "service")
@@ -83,9 +51,9 @@ func main() {
 
     // create files
     log.Println("building project files ...")
-    iniKeys := strings.Fields(iniKeys)
-    flags := strings.Fields(flags)
-    initValue := InitValueTemplate{flags, iniKeys}
+    iniKeys := strings.Fields(inis)
+    flagVars := strings.Fields(flags)
+    initValue := InitValueTemplate{flagVars, iniKeys}
 
     makeFileWithTemplate(define.InitTemplate(), initValue, []string{filepath.Join(definePath, "init.go")})
     makeFileWithTemplate(project_util.IniTemplate(), initValue, []string{filepath.Join(configPath, "app.ini")})
@@ -144,3 +112,4 @@ func makeFileWithTemplate(templateString string, valueTemplate interface{}, s []
 
     return
 }
+
