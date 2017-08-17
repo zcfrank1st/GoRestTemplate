@@ -14,16 +14,18 @@ GoRestTemplate
 
 ### How To Use
 
-* use `make build` to build
-* then use `go_rest_template -h` to show how to use
+* use `make build-all` to build
+* then use `./go_rest_t_simple` or `./go_rest_t_prompt` to show how to use
 
 ### Demo Use
 
-`go_rest_template -absPath=/opt -project=demo -ini="config1 config2" -service="service1 service2" -flag="flag1 flag2"`
+`./go_rest_t_simple -absPath=/opt -project=demo -ini="config1 config2" -service="service1 service2" -flag="flag1 flag2"`
 
-or just
+or
 
-`go_rest_template` to create demo project
+`./go_rest_t_prompt` 
+
+to create project
 
 
 ### Licence
