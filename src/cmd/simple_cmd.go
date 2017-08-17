@@ -6,7 +6,7 @@ import (
     "path/filepath"
     "os/exec"
     "log"
-    "build"
+    "produce"
 )
 
 var (
@@ -42,5 +42,5 @@ func main() {
     log.Printf("{{flag}} :%s \n", flags)
     log.Printf("{{ini}} :%s \n", iniKeys)
 
-    build.GernerateSkeleton(absolute_path, project, service, flag, ini)
+    build.GenerateSkeleton(absolute_path, project, services, flags, iniKeys)
 }

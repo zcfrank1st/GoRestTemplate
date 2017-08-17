@@ -38,7 +38,7 @@ func init () {
     }
 
     Connection = conf.Section(Environment).Key("Connection").String()
-    {{ range $index, $value := .IniKeys }}{{ $value | Title }} = conf.Section(Environment).Key("{{ $value | Title }}").String
+    {{ range $index, $value := .IniKeys }}{{ $value | Title }} = conf.Section(Environment).Key("{{ $value | Title }}").String()
     {{ end }}
 
     Db, _ = sql.Open("mysql", Connection)

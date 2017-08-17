@@ -30,7 +30,7 @@ type (
     }
 )
 
-func GernerateSkeleton(absolute_path string, project string, services string, flags string, inis string) {
+func GenerateSkeleton(absolute_path string, project string, services string, flags string, inis string) {
     bootstrapPath := filepath.Join(absolute_path, "src", "bootstrap")
     definePath := filepath.Join(absolute_path, "src", "define")
     servicePath := filepath.Join(absolute_path, "src", "service")

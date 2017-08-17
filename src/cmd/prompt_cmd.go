@@ -8,7 +8,7 @@ import (
     "fmt"
     "github.com/logrusorgru/aurora"
     "errors"
-    "build"
+    "produce"
 )
 
 const (
@@ -143,7 +143,7 @@ quit/exit                   "Quit the shell"
                     for _, command := range commands {
                         command.run()
                     }
-                    build.GernerateSkeleton(dir, name, service, flag, ini)
+                    build.GenerateSkeleton(dir, name, service, flag, ini)
                 } else {
                     fmt.Println(aurora.Red(err))
                 }
