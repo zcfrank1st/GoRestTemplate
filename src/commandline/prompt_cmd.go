@@ -12,6 +12,16 @@ import (
 )
 
 const (
+    Logo = `
+ ____            ____                    __    ______
+/\  _ \         /\  _ \                 /\ \__/\__  _\
+\ \ \L\_\    ___\ \ \L\ \     __    ____\ \ ,_\/_/\ \/
+ \ \ \L_L   / __ \ \ ,  /   /'__ \ /',__\\ \ \/  \ \ \
+  \ \ \/, \/\ \L\ \ \ \\ \ /\  __//\__,  \\ \ \_  \ \ \
+   \ \____/\ \____/\ \_\ \_\ \____\/\____/ \ \__\  \ \_\
+    \/___/  \/___/  \/_/\/ /\/____/\/___/   \/__/   \/_/
+                                                    v1.0`
+
     Keyword_Dir     = "dir"
     Keyword_Name    = "name"
     Keyword_Service = "service"
@@ -104,15 +114,7 @@ func completer(d prompt.Document) []prompt.Suggest {
 }
 
 func main() {
-    fmt.Println(aurora.Brown(`
- ____            ____                    __    ______
-/\  _ \         /\  _ \                 /\ \__/\__  _\
-\ \ \L\_\    ___\ \ \L\ \     __    ____\ \ ,_\/_/\ \/
- \ \ \L_L   / __ \ \ ,  /   /'__ \ /',__\\ \ \/  \ \ \
-  \ \ \/, \/\ \L\ \ \ \\ \ /\  __//\__,  \\ \ \_  \ \ \
-   \ \____/\ \____/\ \_\ \_\ \____\/\____/ \ \__\  \ \_\
-    \/___/  \/___/  \/_/\/ /\/____/\/___/   \/__/   \/_/
-                                                    v1.0`))
+    fmt.Println(aurora.Brown(Logo))
     for {
         t := prompt.Input(
             "GoRestT ["+ time.Now().String()[:19]+"] >>> ",
@@ -125,18 +127,9 @@ func main() {
 
             switch command_string {
             case Keyword_Help:
-                fmt.Println(aurora.Brown(`
- ____            ____                    __    ______
-/\  _ \         /\  _ \                 /\ \__/\__  _\
-\ \ \L\_\    ___\ \ \L\ \     __    ____\ \ ,_\/_/\ \/
- \ \ \L_L   / __ \ \ ,  /   /'__ \ /',__\\ \ \/  \ \ \
-  \ \ \/, \/\ \L\ \ \ \\ \ /\  __//\__,  \\ \ \_  \ \ \
-   \ \____/\ \____/\ \_\ \_\ \____\/\____/ \ \__\  \ \_\
-    \/___/  \/___/  \/_/\/ /\/____/\/___/   \/__/   \/_/
-                                                    v1.0
-
+                fmt.Println(aurora.Brown(Logo + `
 dir     [absolute filepath] "absolute project path: /usr/demo"
-name    [project name]              "project name which use to set root url segment: demo"
+name    [project name]      "project name which use to set root url segment: demo"
 service [service names]     "service names: hello word haha ..."
 flag    [flag names]        "flag keys: Env Secret ..."
 ini     [ini names]         "config ini keys: Config Connect ..."
