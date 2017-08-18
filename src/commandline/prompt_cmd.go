@@ -71,7 +71,7 @@ func parseCommands(command_string string) ([]*GoRestTCommand, error) {
     for _, command_segments := range commands_segments {
         command_fields := strings.Fields(strings.Trim(command_segments, " "))
         if !checkCommandIfValid(command_fields) {
-            return nil, errors.New("[GoRestT] contains invalid command")
+            return nil, errors.New("[GoRestT] invalid command")
         }
         commands = append(commands, &GoRestTCommand{command_fields[0], command_fields[1: ]})
     }
