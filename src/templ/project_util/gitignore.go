@@ -7,5 +7,6 @@ pkg
 bin/
 vendor/
 *.lock
+*.iml
 `
 }
