@@ -123,9 +123,7 @@ func main() {
             prompt.OptionMaxSuggestion(9))
 
         if t != "" {
-            command_string := strings.ToLower(t)
-
-            switch command_string {
+            switch t {
             case Keyword_Help:
                 fmt.Println(aurora.Brown(Logo + `
 dir     [absolute filepath] "absolute project path: /usr/demo"
@@ -142,7 +140,7 @@ quit/exit                   "Quit the shell"
                 fmt.Println(aurora.Red("[GoRestT] quiting ..."))
                 os.Exit(1)
             default:
-                commands, err := parseCommands(command_string)
+                commands, err := parseCommands(t)
                 if err == nil {
                     for _, command := range commands {
                         command.run()
