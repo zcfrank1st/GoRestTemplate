@@ -68,6 +68,11 @@ func parseCommands(command_string string) ([]*GoRestTCommand, error) {
     var commands []*GoRestTCommand
 
     commands_segments := strings.Split(command_string, SemicolonSplit)
+    last_segment_idx := len(commands_segments) - 1
+    if commands_segments[last_segment_idx] == "" {
+        commands_segments = commands_segments[:last_segment_idx]
+    }
+
     for _, command_segments := range commands_segments {
         command_fields := strings.Fields(strings.Trim(command_segments, " "))
         if !checkCommandIfValid(command_fields) {
